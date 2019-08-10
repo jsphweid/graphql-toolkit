@@ -11,11 +11,11 @@ describe('schema from typedefs', () => {
 
   it('should ignore empty files when using glob expressions', async () => {
     const glob = './tests/loaders/schema/test-files/schema-dir/*.empty.graphql';
-    
+
     try {
       await loadSchema(glob);
       expect(true).toBeFalsy();
-    } catch(e) {
+    } catch (e) {
       expect(e.message).toBe(`Unable to find any GraphQL type defintions for the following pointers: ./tests/loaders/schema/test-files/schema-dir/*.empty.graphql`);
     }
   });
@@ -26,7 +26,7 @@ describe('schema from typedefs', () => {
     try {
       await loadSchema(glob);
       expect(true).toBeFalsy();
-    } catch(e) {
+    } catch (e) {
       expect(e.message).toMatch('Unable to find any GraphQL type defintions for the following pointers');
     }
   });
@@ -37,7 +37,7 @@ describe('schema from typedefs', () => {
     try {
       await loadSchema(glob);
       expect(true).toBeFalsy();
-    } catch(e) {
+    } catch (e) {
       expect(e.message).toBe(`Unable to find any GraphQL type defintions for the following pointers: ./tests/loaders/schema/test-files/schema-dir/*.non-schema.graphql`);
     }
   });
@@ -55,6 +55,15 @@ describe('schema from typedefs', () => {
     const schemaPath = './tests/loaders/schema/test-files/schema-dir/type-defs/graphql-tag.ts';
     const schema = await loadSchema(schemaPath);
 
+    expect(schema.getTypeMap()['User']).toBeDefined();
+    expect(schema.getTypeMap()['Query']).toBeDefined();
+  });
+
+  it('should work with a literal that has types defined in initial document as well as other definitions imported through variables', async () => {
+    const schemaPath = './tests/loaders/schema/test-files/schema-dir/type-defs/graphql-tag-mixed.ts';
+    const schema = await loadSchema(schemaPath);
+
+    expect(schema.getTypeMap()['Review']).toBeDefined();
     expect(schema.getTypeMap()['User']).toBeDefined();
     expect(schema.getTypeMap()['Query']).toBeDefined();
   });
